@@ -9,7 +9,7 @@ contract Raffle {
     address payable[] private s_players;
 
     /* Events */
-    event RaffleEvent
+    event RaffleEvent (address indexed player);
 
     constructor(uint256 entranceFee) {
         i_entranceFee = entranceFee;
@@ -20,7 +20,7 @@ contract Raffle {
             revert Raffle__NotEnoughETHEntered();
         }
         s_players.push(payable (msg.sender));
-
+        emit RaffleEvent(msg.sender);
         // EVENTS: emit an event whenever the dynamic array or mapping is updated.
         // ṇamed events with the function named reversed
     }
