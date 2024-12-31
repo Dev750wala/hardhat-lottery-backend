@@ -24,10 +24,18 @@ contract Raffle {
         s_players.push(payable (msg.sender));
         emit RaffleEvent(msg.sender);
         // EVENTS: emit an event whenever the dynamic array or mapping is updated.
-        // ṇamed events with the function named reversed
+        // named events with the function named reversed
     }
 
-    // function pickRandomWinner() {}
+    function requestRandomWinner() external {
+        // Request random number from Chainlink VRF
+        // once we get it back, we will use it to pick a winner
+        // so this is 2 transactions process        
+    }
+
+    function fulfillRandomWords() internal override {
+
+    }
 
     function getEntranceFee() public view returns(uint256) {
         return i_entranceFee;
