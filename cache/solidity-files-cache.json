@@ -2,9 +2,144 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/dev_sadisatsowala/Web3.0-Patrick/hardhat-lottery/contracts/Raffle.sol": {
-      "lastModificationDate": 1735387163496,
-      "contentHash": "f1130892da8b32158579c6f6664f9358",
+      "lastModificationDate": 1735842717659,
+      "contentHash": "35b0bc182c755f850a288b52b915b847",
       "sourceName": "contracts/Raffle.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Raffle"
+      ]
+    },
+    "/home/dev_sadisatsowala/Web3.0-Patrick/hardhat-lottery/node_modules/@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol": {
+      "lastModificationDate": 1735527964858,
+      "contentHash": "06f8ab6bd949cea1abd42940d7965d65",
+      "sourceName": "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "VRFConsumerBaseV2"
+      ]
+    },
+    "/home/dev_sadisatsowala/Web3.0-Patrick/hardhat-lottery/node_modules/@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2Mock.sol": {
+      "lastModificationDate": 1735527965278,
+      "contentHash": "736f987bc8eb5c09d0ee4a664862e204",
+      "sourceName": "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2Mock.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/VRFCoordinatorV2Interface.sol",
+        "../VRFConsumerBaseV2.sol",
+        "../../shared/access/ConfirmedOwner.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "VRFCoordinatorV2Mock"
+      ]
+    },
+    "/home/dev_sadisatsowala/Web3.0-Patrick/hardhat-lottery/node_modules/@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol": {
+      "lastModificationDate": 1735527965268,
+      "contentHash": "c4963e3862ffee2974cc634689745531",
+      "sourceName": "@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol",
       "solcConfig": {
         "version": "0.8.28",
         "settings": {
@@ -41,8 +176,184 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "Raffle"
+        "VRFCoordinatorV2Interface"
       ]
+    },
+    "/home/dev_sadisatsowala/Web3.0-Patrick/hardhat-lottery/node_modules/@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol": {
+      "lastModificationDate": 1735527965228,
+      "contentHash": "1ed782c1e3014a255f9171aefc3cdde3",
+      "sourceName": "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./ConfirmedOwnerWithProposal.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ConfirmedOwner"
+      ]
+    },
+    "/home/dev_sadisatsowala/Web3.0-Patrick/hardhat-lottery/node_modules/@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwnerWithProposal.sol": {
+      "lastModificationDate": 1735527965228,
+      "contentHash": "f29daa205dcbdc6037de8e38e5a34158",
+      "sourceName": "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwnerWithProposal.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IOwnable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ConfirmedOwnerWithProposal"
+      ]
+    },
+    "/home/dev_sadisatsowala/Web3.0-Patrick/hardhat-lottery/node_modules/@chainlink/contracts/src/v0.8/shared/interfaces/IOwnable.sol": {
+      "lastModificationDate": 1735527965248,
+      "contentHash": "b3ae9b7345205a0a65f3e0f89c176d88",
+      "sourceName": "@chainlink/contracts/src/v0.8/shared/interfaces/IOwnable.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IOwnable"
+      ]
+    },
+    "/home/dev_sadisatsowala/Web3.0-Patrick/hardhat-lottery/contracts/test/VRFCoordinatorV2Mock..sol": {
+      "lastModificationDate": 1735582152574,
+      "contentHash": "a87e399a24d7f1ca9cf879605ddedd38",
+      "sourceName": "contracts/test/VRFCoordinatorV2Mock..sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2Mock.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": []
     }
   }
 }
