@@ -23,7 +23,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
         }
         s_players.push(payable(msg.sender));
         emit RaffleEvent(msg.sender); 
-
+ 
         // EVENTS: emit an event whenever the dynamic array or mapping is updated.
         // named events with the function named reversed
     }
