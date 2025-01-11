@@ -16,7 +16,7 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
     event RequestFulfilled(uint256 requestId, uint256[] randomWords);
 
     struct RequestStatus {
-        bool fulfilled; // whether the request has been successfully fulfilled
+        bool fulfilled;
         bool exists; 
         uint256[] randomWords;
     }
@@ -28,7 +28,6 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
     }
 
     uint256 public s_subscriptionId;
-    uint32 private constant NUM_WORDS = 1;
 
     // s_entranceFee in ETH. not USD
     uint256 private immutable i_interval;
@@ -106,7 +105,13 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
                 )
             })
         );
-
+        lastRequestId = requestId;
+        requestIds.push(requestId);
+        s_requests[requestId] = RequestStatus({
+            fulfilled: false,
+            exists: true,
+            randomWords: new uint256[](0)
+        });
         emit RequestedRaffleWinner(requestId);
     }
 
@@ -128,7 +133,7 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
         return (request.fulfilled, request.randomWords);
     }
 
-    function getLatestWinner() external {
+    function payLatestWinner() external {
         if (lastRequestId == 0 || !s_requests[lastRequestId].fulfilled) {
             revert Raffle_WinnerIsNotSelectedYet();
         }
@@ -151,9 +156,6 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
         return s_raffleState;
     }
 
-    function getNumWords() public pure returns (uint256) {
-        return NUM_WORDS;
-    }
 
     function getRequestConfirmations() public pure returns (uint256) {
         return REQUEST_CONFIRMATIONS;
