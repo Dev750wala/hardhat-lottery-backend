@@ -2,12 +2,14 @@
     "compilerOptions": {
         "target": "es2020",
         "module": "NodeNext",
-        "moduleResolution": "NodeNext",
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
         "strict": true,
+        "esModuleInterop": true,
+        "moduleResolution": "NodeNext",
+        "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
-        "resolveJsonModule": true
+        "outDir": "./dist",
+        "resolveJsonModule": true,
     },
-    "include": ["./hardhat.config.ts", "./scripts", "./deploy", "./test"]
+    "include": ["./hardhat.config.ts", "./scripts", "./deploy", "./test", "./typechain-types"],
+    "files": ["./hardhat.config.ts"]
 }
