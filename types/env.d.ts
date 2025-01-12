@@ -6,5 +6,6 @@ declare namespace NodeJS {
         ETHERSCAN_API_KEY: string
         COINMARKET_CAP_API_KEY: string
         METAMASK_PRIVATE_KEY: string
+        CHAINLINK_VRF_SUBSCRIPTION_ID: string
     }
 }

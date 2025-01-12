@@ -2,29 +2,46 @@ import "hardhat-deploy"
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { developmentChains, networkConfig } from "../helper-hardhat.config";
 import { ethers, network } from "hardhat";
+import { VRFCoordinatorV2_5Mock } from "../typechain-types/@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock";
+import { verify } from "../utils/verify"
+
+const VRF_SUB_FUND_AMOUNT = ethers.parseEther("2")
 
 module.exports = async function (hre: HardhatRuntimeEnvironment) {
     const { getNamedAccounts, deployments } = hre
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
+    const deployerSigner = await ethers.getSigner(deployer)
     const chainId = network.config.chainId
 
     let vrfCoordinatorAddress: string
+    let subscriptionId: bigint | string
+
     if (developmentChains.includes(network.name)) {
         const vrfCoordinatorV2_5Mock = await deployments.get("VRFCoordinatorV2_5Mock")
         vrfCoordinatorAddress = vrfCoordinatorV2_5Mock.address
-        console.log("Default mock deployed at: ", vrfCoordinatorAddress);
+        console.log("Default mock deployed is at: ", vrfCoordinatorAddress);
+
+        // requesting subscriptionId from the mocks
+        const mockContract = (await ethers.getContractAt(
+            "VRFCoordinatorV2_5Mock",
+            (await deployments.get("VRFCoordinatorV2_5Mock")).address,
+            deployerSigner
+        )) as unknown as VRFCoordinatorV2_5Mock;
+
+        // CREATE SUBSCRIPTION
+        const tx = await mockContract.createSubscription();
+        const txReceipt = await tx.wait();
+        const eventFilter = mockContract.filters.SubscriptionCreated();
+        const logs = await mockContract.queryFilter(eventFilter, txReceipt?.blockNumber, txReceipt?.blockNumber);
+        subscriptionId = logs[0]?.args?.subId;
+
+        // FUND SUBSCRIPTION
+        await mockContract.fundSubscription(subscriptionId, VRF_SUB_FUND_AMOUNT)
+
     } else {
-        if (
-            chainId &&
-            networkConfig[chainId as keyof typeof networkConfig] &&
-            typeof networkConfig[chainId as keyof typeof networkConfig]._vrfCoordinator === "string"
-        ) {
-            vrfCoordinatorAddress = networkConfig[chainId as keyof typeof networkConfig]?._vrfCoordinator as string
-        }
-        else {
-            throw new Error("ChainId not found in network config")
-        }
+        vrfCoordinatorAddress = networkConfig[chainId as keyof typeof networkConfig]?._vrfCoordinator as string
+        subscriptionId = networkConfig[chainId as keyof typeof networkConfig]?.subscriptionId as bigint | string
     }
 
     /*
@@ -34,13 +51,27 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
         uint256 interval,
         address _vrfCoordinator
     */
+
     const entranceFee = networkConfig[chainId as keyof typeof networkConfig].entranceFee
-    // const subscriptionId
+    const interval = "60"
+    
+    const args = [entranceFee, subscriptionId, interval, vrfCoordinatorAddress]
 
     const raffle = await deploy("Raffle", {
         from: deployer,
-        args: [],
+        args: args,
         log: true,
-        waitConfirmations: 2
+        // waitConfirmations: 2,
+        contract: "Raffle",
     })
+    log("Raffle deployed at: ", raffle.address)
+
+    if(!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Verifying contract on Etherscan...");
+        await verify(raffle.address, args)
+    }
+
+    log("------------------------------------");
 }
+
+module.exports.tags = ["all", "raffle"]
