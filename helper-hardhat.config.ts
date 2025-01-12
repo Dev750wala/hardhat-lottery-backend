@@ -14,13 +14,14 @@ const networkConfig: NetworkConfigg = {
         _vrfCoordinator: "0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B",
         entranceFee: ethers.parseEther("0.01")
     },
-    31337: {
-        name: "hardhat",
+    1337: {
+        name: "ganache",
         entranceFee: ethers.parseEther("0.01")
-    }
+    },
+
 }
 
-const developmentChains = ['hardhat', 'localhost']
+const developmentChains = ['hardhat', 'localhost', 'ganache']
 
 export {
     networkConfig,

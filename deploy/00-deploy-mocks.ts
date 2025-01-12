@@ -1,33 +1,53 @@
-import { developmentChains, } from "../helper-hardhat.config"
-import { network } from "hardhat"
+import { developmentChains } from "../helper-hardhat.config";
+import { ethers, network } from "hardhat";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import "hardhat-deploy"
+import "hardhat-deploy";
+import { VRFCoordinatorV2_5Mock } from "../typechain-types/@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock";
 
-const _BASEFEE = 100000000000000000n
-const _GASPRICELINK = 1000000000
-const _WEIPERUNITLINK = 6148963427961250
+const _BASEFEE = 100000000000000000n;
+const _GASPRICELINK = 1000000000;
+const _WEIPERUNITLINK = 6148963427961250;
 
 module.exports = async function (hre: HardhatRuntimeEnvironment) {
-    const { getNamedAccounts, deployments } = hre
-    const { deploy, log } = deployments
-    const { deployer } = await getNamedAccounts()
+    const { getNamedAccounts, deployments } = hre;
+    const { deploy, log } = deployments;
+    const { deployer } = await getNamedAccounts();
+    const deployerSigner = await ethers.getSigner(deployer);
 
-    const chainId = network.config.chainId
+    const chainId = network.config.chainId;
 
-    if(developmentChains.includes(network.name)) {
-        log("Local network detected! deploying mocks...")
+    console.log("Chain ID: ", chainId);
+    console.log("Network: ", network.name);
 
-        let args = [_BASEFEE, _GASPRICELINK, _WEIPERUNITLINK]
+    if (developmentChains.includes(network.name)) {
+        log("Local network detected! Deploying mocks...");
+
+        const args = [_BASEFEE, _GASPRICELINK, _WEIPERUNITLINK];
 
         await deploy("VRFCoordinatorV2_5Mock", {
             from: deployer,
             log: true,
             args: args,
-            contract: "VRFCoordinatorV2_5Mock"
-        })
-        log("Mocks deployed!")
-        log("------------------------------------")
-    }
-}
+            contract: "VRFCoordinatorV2_5Mock",
+        });
+        log("Mocks deployed!");
+        log("------------------------------------");
 
-module.exports.tags = ["all", "mocks"]
+        const mockContract = (await ethers.getContractAt(
+            "VRFCoordinatorV2_5Mock",
+            (await deployments.get("VRFCoordinatorV2_5Mock")).address,
+            deployerSigner
+        )) as unknown as VRFCoordinatorV2_5Mock;
+
+        const tx = await mockContract.createSubscription();
+        const txReceipt = await tx.wait();
+
+        const eventFilter = mockContract.filters.SubscriptionCreated();
+        const logs = await mockContract.queryFilter(eventFilter, txReceipt?.blockNumber, txReceipt?.blockNumber);
+        const subscriptionId = logs[0]?.args?.subId;
+
+        console.log(`Subscription ID: ${subscriptionId}`);
+    }
+};
+
+module.exports.tags = ["all", "mocks"];

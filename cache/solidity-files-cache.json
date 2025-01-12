@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/dev_sadisatsowala/Web3.0-Patrick/hardhat-lottery/contracts/Raffle.sol": {
-      "lastModificationDate": 1736584908274,
-      "contentHash": "839fcc8ebd2cbfc14a65f41eb09e548d",
+      "lastModificationDate": 1736671915477,
+      "contentHash": "d15a60d126c3e7876a4d8f9b3127da69",
       "sourceName": "contracts/Raffle.sol",
       "solcConfig": {
         "version": "0.8.28",
@@ -42,7 +42,7 @@
         "@chainlink/contracts/src/v0.8/automation/interfaces/AutomationCompatibleInterface.sol"
       ],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.19"
       ],
       "artifacts": [
         "Raffle"
@@ -850,8 +850,8 @@
       ]
     },
     "/home/dev_sadisatsowala/Web3.0-Patrick/hardhat-lottery/contracts/test/VRFCoordinatorV2_5Mock.sol": {
-      "lastModificationDate": 1736620174673,
-      "contentHash": "486a0d8267507df20c1d28439f7be434",
+      "lastModificationDate": 1736671902237,
+      "contentHash": "93c0aef6bf4e80dbe8beeb743c16b5d4",
       "sourceName": "contracts/test/VRFCoordinatorV2_5Mock.sol",
       "solcConfig": {
         "version": "0.8.28",
@@ -888,7 +888,7 @@
         "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol"
       ],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.19"
       ],
       "artifacts": []
     }
