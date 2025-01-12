@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { VRFCoordinatorV2Mock } from "./VRFCoordinatorV2Mock";
+export type { VRFCoordinatorV2_5Mock } from "./VRFCoordinatorV2_5Mock";

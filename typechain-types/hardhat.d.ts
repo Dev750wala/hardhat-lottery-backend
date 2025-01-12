@@ -26,9 +26,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ConfirmedOwnerWithProposal__factory>;
     getContractFactory(
+      name: "AggregatorV3Interface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AggregatorV3Interface__factory>;
+    getContractFactory(
+      name: "IERC677Receiver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC677Receiver__factory>;
+    getContractFactory(
       name: "IOwnable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IOwnable__factory>;
+    getContractFactory(
+      name: "LinkTokenInterface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LinkTokenInterface__factory>;
     getContractFactory(
       name: "IVRFCoordinatorV2Plus",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -46,6 +58,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VRFV2PlusClient__factory>;
     getContractFactory(
+      name: "SubscriptionAPI",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SubscriptionAPI__factory>;
+    getContractFactory(
       name: "VRFConsumerBaseV2Plus",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VRFConsumerBaseV2Plus__factory>;
@@ -53,6 +69,10 @@ declare module "hardhat/types/runtime" {
       name: "VRFCoordinatorV2Interface",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VRFCoordinatorV2Interface__factory>;
+    getContractFactory(
+      name: "VRFCoordinatorV2_5Mock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VRFCoordinatorV2_5Mock__factory>;
     getContractFactory(
       name: "VRFCoordinatorV2Mock",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -82,10 +102,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ConfirmedOwnerWithProposal>;
     getContractAt(
+      name: "AggregatorV3Interface",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AggregatorV3Interface>;
+    getContractAt(
+      name: "IERC677Receiver",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC677Receiver>;
+    getContractAt(
       name: "IOwnable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IOwnable>;
+    getContractAt(
+      name: "LinkTokenInterface",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LinkTokenInterface>;
     getContractAt(
       name: "IVRFCoordinatorV2Plus",
       address: string | ethers.Addressable,
@@ -107,6 +142,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.VRFV2PlusClient>;
     getContractAt(
+      name: "SubscriptionAPI",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SubscriptionAPI>;
+    getContractAt(
       name: "VRFConsumerBaseV2Plus",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -116,6 +156,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.VRFCoordinatorV2Interface>;
+    getContractAt(
+      name: "VRFCoordinatorV2_5Mock",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VRFCoordinatorV2_5Mock>;
     getContractAt(
       name: "VRFCoordinatorV2Mock",
       address: string | ethers.Addressable,
@@ -145,9 +190,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ConfirmedOwnerWithProposal>;
     deployContract(
+      name: "AggregatorV3Interface",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AggregatorV3Interface>;
+    deployContract(
+      name: "IERC677Receiver",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC677Receiver>;
+    deployContract(
       name: "IOwnable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IOwnable>;
+    deployContract(
+      name: "LinkTokenInterface",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LinkTokenInterface>;
     deployContract(
       name: "IVRFCoordinatorV2Plus",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -165,6 +222,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.VRFV2PlusClient>;
     deployContract(
+      name: "SubscriptionAPI",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SubscriptionAPI>;
+    deployContract(
       name: "VRFConsumerBaseV2Plus",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.VRFConsumerBaseV2Plus>;
@@ -172,6 +233,10 @@ declare module "hardhat/types/runtime" {
       name: "VRFCoordinatorV2Interface",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.VRFCoordinatorV2Interface>;
+    deployContract(
+      name: "VRFCoordinatorV2_5Mock",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.VRFCoordinatorV2_5Mock>;
     deployContract(
       name: "VRFCoordinatorV2Mock",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -201,10 +266,25 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ConfirmedOwnerWithProposal>;
     deployContract(
+      name: "AggregatorV3Interface",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AggregatorV3Interface>;
+    deployContract(
+      name: "IERC677Receiver",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC677Receiver>;
+    deployContract(
       name: "IOwnable",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IOwnable>;
+    deployContract(
+      name: "LinkTokenInterface",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LinkTokenInterface>;
     deployContract(
       name: "IVRFCoordinatorV2Plus",
       args: any[],
@@ -226,6 +306,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.VRFV2PlusClient>;
     deployContract(
+      name: "SubscriptionAPI",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SubscriptionAPI>;
+    deployContract(
       name: "VRFConsumerBaseV2Plus",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -235,6 +320,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.VRFCoordinatorV2Interface>;
+    deployContract(
+      name: "VRFCoordinatorV2_5Mock",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.VRFCoordinatorV2_5Mock>;
     deployContract(
       name: "VRFCoordinatorV2Mock",
       args: any[],

@@ -51,8 +51,9 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
     constructor(
         uint256 entranceFee,
         uint256 subscriptionId,
-        uint256 interval
-    ) VRFConsumerBaseV2Plus(0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B) {
+        uint256 interval,
+        address _vrfCoordinator
+    ) VRFConsumerBaseV2Plus(_vrfCoordinator) {
         i_interval = interval;
         s_subscriptionId = subscriptionId;
         i_entranceFee = entranceFee;
