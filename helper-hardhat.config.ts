@@ -21,6 +21,10 @@ const networkConfig: NetworkConfigg = {
         name: "ganache",
         entranceFee: ethers.parseEther("0.01")
     },
+    31337: {
+        name: "hardhat",
+        entranceFee: ethers.parseEther("0.01")
+    }
 
 }
 

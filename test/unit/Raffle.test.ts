@@ -9,25 +9,25 @@ import { VRFCoordinatorV2_5Mock } from "../../typechain-types/@chainlink/contrac
     : describe("Raffle", () => {
         let raffle: Raffle, vrfCoordinatorV2_5Mock: VRFCoordinatorV2_5Mock
 
-        beforeEach(async function() {
+        beforeEach(async function () {
             const { deployer } = await getNamedAccounts()
             await deployments.fixture(["all"])
 
             raffle = await ethers.getContractAt(
-                "Raffle", 
-                (await deployments.get("Raffle")).address, 
+                "Raffle",
+                (await deployments.get("Raffle")).address,
                 await ethers.getSigner(deployer)
             ) as unknown as Raffle
 
             vrfCoordinatorV2_5Mock = await ethers.getContractAt(
-                "VRFCoordinatorV2_5Mock", 
-                (await deployments.get("VRFCoordinatorV2_5Mock")).address, 
+                "VRFCoordinatorV2_5Mock",
+                (await deployments.get("VRFCoordinatorV2_5Mock")).address,
                 await ethers.getSigner(deployer)
             ) as unknown as VRFCoordinatorV2_5Mock
         })
 
-        describe("constructor", async function() {
-            it("It initializes the contract with the correct values", async function() {     
+        describe("constructor", async function () {
+            it("It initializes the contract with the correct values", async function () {
                 // We make our tests only one assert per it.
                 const raffleState = await raffle.getRaffleState()
                 const interval = await raffle.getInterval()
@@ -37,17 +37,8 @@ import { VRFCoordinatorV2_5Mock } from "../../typechain-types/@chainlink/contrac
         })
 
         describe("enterRaffle", function () {
-            // it("reverts when you don't pay enough", async function () {
-            //     await expect(raffle.enterRaffle()).to.be.revertedWithCustomError(
-            //         raffle,
-            //         "Raffle__SendMoreToEnterRaffle"
-            //     );
-            // });
-
             it("reverts when you don't pay enough", async () => {
-                await expect(raffle.enterRaffle()).to.be.rejectedWith("Raffle__SendMoreToEnterRaffle")
+                await expect(raffle.enterRaffle()).to.be.revertedWithCustomError(raffle, 'Raffle__SendMoreToEnterRaffle')
             })
         });
-
-
     })
