@@ -1,14 +1,16 @@
 import { HardhatUserConfig } from "hardhat/types";
-import '@typechain/hardhat'
-import "hardhat-deploy"
-import '@nomicfoundation/hardhat-ethers'
-require("@nomiclabs/hardhat-waffle")
-require("@nomiclabs/hardhat-etherscan")
-// require("hardhat-deploy")
-require("solidity-coverage")
-require("hardhat-gas-reporter")
-require("hardhat-contract-sizer")
-require("dotenv").config()
+import "@typechain/hardhat";
+import "hardhat-deploy";
+import "@nomicfoundation/hardhat-ethers";
+import "@nomiclabs/hardhat-waffle";
+import "@nomiclabs/hardhat-etherscan";
+import "solidity-coverage";
+import "hardhat-gas-reporter";
+import "hardhat-contract-sizer";
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
 
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL
 
@@ -30,7 +32,10 @@ const config: HardhatUserConfig = {
             chainId: 1337
         }
     },
-    solidity: "0.8.28",
+    gasReporter: {
+        currency: 'USD',
+        enabled: false
+    },
     namedAccounts: {
         deployer: {
             default: 0,
@@ -38,7 +43,8 @@ const config: HardhatUserConfig = {
         player: {
             default: 1
         }
-    }
+    },
+    solidity: "0.8.28",
 };
 
     

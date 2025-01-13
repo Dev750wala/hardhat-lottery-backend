@@ -53,7 +53,7 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
     */
 
     const entranceFee = networkConfig[chainId as keyof typeof networkConfig].entranceFee
-    const interval = "60"
+    const interval = "30"
     
     const args = [entranceFee, subscriptionId, interval, vrfCoordinatorAddress]
 
