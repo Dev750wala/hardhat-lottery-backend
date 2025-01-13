@@ -26,8 +26,8 @@ const config: HardhatUserConfig = {
         ganache: {
             url: "HTTP://172.21.208.1:7545",
             accounts: [
-                "0xbae8ba8ad5a25edcac890d18632491972502041e3e7fd0831a1e9821c59efed0",
-                "0x49d6dae9182dfcaf3f9dc443b819bf970c74e67af04f5a59c990656091c4b284"
+                "0xf4127351e9fabd7de3f76f2d1acd7adbd27f29337d866e2ca166a9ad131d1d55",
+                "0x0439839b17ecab637bd81fce5fabaf90b273d0d6f862fb43fb095a6c40845fc7"
             ],
             chainId: 1337
         }
