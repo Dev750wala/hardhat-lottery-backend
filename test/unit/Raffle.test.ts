@@ -36,6 +36,8 @@ import path from "path";
 
             const outputPath = path.join(__dirname, "../../AAAAAAAAAAAAAA/subscriptionData.json");
             subId = JSON.parse(fs.readFileSync(outputPath, "utf-8")).subscriptionId
+
+            await vrfCoordinatorV2_5Mock.addConsumer(subId, raffle.getAddress())
         })
 
         // CONSTRUCTOR TESTS
@@ -67,9 +69,9 @@ import path from "path";
             })
 
             it("doesn't allow entrance when raffle is calculating", async () => {
-                await vrfCoordinatorV2_5Mock.addConsumer(subId, raffle.getAddress())
+                // await vrfCoordinatorV2_5Mock.addConsumer(subId, raffle.getAddress())
                 await raffle.enterRaffle({ value: raffleEntranceFee })
-                await network.provider.send("evm_increaseTime", [toNumber(interval)+1])
+                await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
                 await network.provider.send("evm_mine", [])
 
                 // yet all the conditions are met, we need to make the raffle calculating
@@ -79,11 +81,57 @@ import path from "path";
         });
 
         // checkUpKeep tests
-        describe("checkUpKeep", function() {
+        describe("checkUpKeep", function () {
             it("returns false if people haven't sent any ETH", async () => {
-                await network.provider.send("evm_increaseTime", [toNumber(interval)+1])
-                await network.provider.send("evm_mine", []) 
-                
+                await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
+                await network.provider.send("evm_mine", [])
+                const { upkeepNeeded } = await raffle.checkUpkeep("0x")
+                assert(!upkeepNeeded, "Upkeep should not be needed")
+            })
+
+            it("returns false if raffle isn't open", async () => {
+                // await vrfCoordinatorV2_5Mock.addConsumer(subId, raffle.getAddress())
+                await raffle.enterRaffle({ value: raffleEntranceFee })
+                await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
+                await network.provider.send("evm_mine", [])
+                await raffle.performUpkeep("0x")
+                const raffleState = await raffle.getRaffleState()
+                const { upkeepNeeded } = await raffle.checkUpkeep("0x")
+                assert.equal(
+                    raffleState.toString(),
+                    '1',
+                )
+                assert.equal(
+                    upkeepNeeded,
+                    false
+                )
+            })
+
+            it("returns false if enough time hasn't passed", async () => {
+                await raffle.enterRaffle({ value: raffleEntranceFee })
+                await network.provider.send("evm_increaseTime", [toNumber(interval) - 1])
+                await network.provider.request({ method: "evm_mine", params: [] })
+                const { upkeepNeeded } = await raffle.checkUpkeep("0x")
+                assert(!upkeepNeeded)
+            })
+
+            it("returns true if enough time has passed, has players, eth, and is open", async() => {
+                await raffle.enterRaffle({ value: raffleEntranceFee })
+                await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
+                await network.provider.request({ method: "evm_mine", params: [] })
+                const { upkeepNeeded } = await raffle.checkUpkeep("0x")
+                assert(upkeepNeeded)
+            })
+        })
+
+        // performUpkeep tests
+        describe("performUpkeep", function () {
+            it("it can only run if checkUpKeep is true", async () => {
+                await raffle.enterRaffle({ value: raffleEntranceFee })
+                await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
+                await network.provider.request({ method: "evm_mine", params: [] })
+                const tx = await raffle.performUpkeep("0x")
+                assert(tx)
             })
         })
     })

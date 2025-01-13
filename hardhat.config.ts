@@ -1,5 +1,6 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
+// import "@typechain/hardhat"
 // import "@nomiclabs/hardhat-waffle"
 // require("@nomiclabs/hardhat-etherscan")
 require("hardhat-deploy")
