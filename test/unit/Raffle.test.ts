@@ -27,8 +27,7 @@ import { VRFCoordinatorV2_5Mock } from "../../typechain-types/@chainlink/contrac
         })
 
         describe("constructor", async function() {
-            it("It initializes the contract with the correct values", async function() {
-                
+            it("It initializes the contract with the correct values", async function() {     
                 // We make our tests only one assert per it.
                 const raffleState = await raffle.getRaffleState()
                 const interval = await raffle.getInterval()
@@ -36,4 +35,19 @@ import { VRFCoordinatorV2_5Mock } from "../../typechain-types/@chainlink/contrac
                 assert.equal(interval.toString(), '30', "Interval should be 30")
             })
         })
+
+        describe("enterRaffle", function () {
+            // it("reverts when you don't pay enough", async function () {
+            //     await expect(raffle.enterRaffle()).to.be.revertedWithCustomError(
+            //         raffle,
+            //         "Raffle__SendMoreToEnterRaffle"
+            //     );
+            // });
+
+            it("reverts when you don't pay enough", async () => {
+                await expect(raffle.enterRaffle()).to.be.rejectedWith("Raffle__SendMoreToEnterRaffle")
+            })
+        });
+
+
     })

@@ -2,11 +2,13 @@ import { HardhatUserConfig } from "hardhat/types";
 import "@typechain/hardhat";
 import "hardhat-deploy";
 import "@nomicfoundation/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
+// import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-etherscan";
 import "solidity-coverage";
 import "hardhat-gas-reporter";
 import "hardhat-contract-sizer";
+require("@nomicfoundation/hardhat-chai-matchers")
+// import "@nomicfoundation/hardhat-chai-matchers";
 import * as dotenv from "dotenv";
 
 dotenv.config();
