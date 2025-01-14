@@ -173,6 +173,7 @@ import path from "path";
         })
 
         describe("getRequestStatus", function () {
+            let requestId: any;
             beforeEach(async function() {
                 await vrfCoordinatorV2_5Mock.fundSubscription(subId, 100000000000000000000n)
 
@@ -185,13 +186,62 @@ import path from "path";
                 )
                 const txReceipt = await tx.wait(1)
                 const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested()
-                const logs2 = await vrfCoordinatorV2_5Mock.queryFilter(
+                const logs = await vrfCoordinatorV2_5Mock.queryFilter(
                     temp, 
                     txReceipt?.blockNumber, 
                     txReceipt?.blockNumber
                 );
 
-                let requestId = logs2[0]?.args?.requestId;
+                requestId = logs[0]?.args?.requestId;
+            })
+
+            it("should return the fulfilled status as false for an unfulfilled request", async () => {
+                const { fulfilled } = await raffle.getRequestStatus(requestId)
+                assert.equal(fulfilled, false)
+            })
+            
+            it("should return the fulfilled status as true for a fulfilled request", async () => {
+                // fulfilling the request manually here through the mock contract
+                await vrfCoordinatorV2_5Mock.fulfillRandomWords(
+                    requestId, 
+                    raffle.getAddress()
+                )
+
+                const { fulfilled } = await raffle.getRequestStatus(requestId)
+                assert.equal(fulfilled, true)
+            })
+
+            it("should return the correct random words for a fulfilled request", async () => {
+                await vrfCoordinatorV2_5Mock.fulfillRandomWords(
+                    requestId,
+                    raffle.getAddress()
+                )
+
+                const { randomWords } = await raffle.getRequestStatus(requestId)
+                // console.log("randomWords: ", randomWords);   // should be an array of 1 random number.
+                
+                assert(randomWords[0] > 0)
+            })
+
+            it("should revert if the request ID does not exist", async () => {
+                await expect(raffle.getRequestStatus(0)).to.be.revertedWith("request not found")
+            })
+
+            it("should correctly return data for the latest request ID when multiple requests are made", async () => {
+                const tx2 = await raffle.performUpkeep(
+                    new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
+                )
+                const txReceipt2 = await tx2.wait(1)
+                const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested()
+                const logs = await vrfCoordinatorV2_5Mock.queryFilter(
+                    temp,
+                    txReceipt2?.blockNumber,
+                    txReceipt2?.blockNumber
+                );
+
+                var requestId2 = logs[0]?.args?.requestId;
+
+                await assert.equal(raffle.lastRequestId , requestId2)
             })
         })
     })

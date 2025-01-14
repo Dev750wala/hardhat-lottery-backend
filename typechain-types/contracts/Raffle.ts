@@ -426,7 +426,13 @@ export interface Raffle extends BaseContract {
 
   getRequestStatus: TypedContractMethod<
     [_requestId: BigNumberish],
-    [[boolean, bigint[]] & { fulfilled: boolean; randomWords: bigint[] }],
+    [
+      [boolean, boolean, bigint[]] & {
+        fulfilled: boolean;
+        exists: boolean;
+        randomWords: bigint[];
+      }
+    ],
     "view"
   >;
 
@@ -524,7 +530,13 @@ export interface Raffle extends BaseContract {
     nameOrSignature: "getRequestStatus"
   ): TypedContractMethod<
     [_requestId: BigNumberish],
-    [[boolean, bigint[]] & { fulfilled: boolean; randomWords: bigint[] }],
+    [
+      [boolean, boolean, bigint[]] & {
+        fulfilled: boolean;
+        exists: boolean;
+        randomWords: bigint[];
+      }
+    ],
     "view"
   >;
   getFunction(

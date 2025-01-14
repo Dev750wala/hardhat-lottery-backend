@@ -129,10 +129,10 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
 
     function getRequestStatus(
         uint256 _requestId
-    ) external view returns (bool fulfilled, uint256[] memory randomWords) {
+    ) external view returns (bool fulfilled, bool exists, uint256[] memory randomWords) {
         require(s_requests[_requestId].exists, "request not found");
         RequestStatus memory request = s_requests[_requestId];
-        return (request.fulfilled, request.randomWords);
+        return (request.fulfilled, request.exists, request.randomWords);
     }
 
     function payLatestWinner() external {
