@@ -6,7 +6,7 @@ import { VRFCoordinatorV2_5Mock } from "../typechain-types/@chainlink/contracts/
 
 const _BASEFEE = 100000000000000000n;
 const _GASPRICELINK = 1000000000;
-const _WEIPERUNITLINK = 6148963427961250;
+const _WEIPERUNITLINK = 6220544689828454;
 
 module.exports = async function (hre: HardhatRuntimeEnvironment) {
     const { getNamedAccounts, deployments } = hre;

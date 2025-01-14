@@ -5,6 +5,7 @@ import { Raffle } from "../../typechain-types/contracts/Raffle"
 import { VRFCoordinatorV2_5Mock } from "../../typechain-types/@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock";
 import { toNumber } from "ethers";
 
+
 import * as fs from "fs";
 import path from "path";
 
@@ -12,6 +13,9 @@ import path from "path";
     ? describe.skip
     : describe("Raffle", () => {
         let raffle: Raffle, vrfCoordinatorV2_5Mock: VRFCoordinatorV2_5Mock, raffleEntranceFee: bigint, deployerGlobe: string, interval: bigint, subId: string
+
+        // pay in link
+        const ENABLE_NATIVE_PAYMENT = false
 
         beforeEach(async function () {
             const { deployer } = await getNamedAccounts()
@@ -75,7 +79,9 @@ import path from "path";
                 await network.provider.send("evm_mine", [])
 
                 // yet all the conditions are met, we need to make the raffle calculating
-                await raffle.performUpkeep("0x")
+                await raffle.performUpkeep(
+                    new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
+                )
                 await expect(raffle.enterRaffle({ value: raffleEntranceFee })).to.be.revertedWithCustomError(raffle, 'Raffle__RaffleNotOpen')
             })
         });
@@ -94,7 +100,9 @@ import path from "path";
                 await raffle.enterRaffle({ value: raffleEntranceFee })
                 await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
                 await network.provider.send("evm_mine", [])
-                await raffle.performUpkeep("0x")
+                await raffle.performUpkeep(
+                    new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
+                )
                 const raffleState = await raffle.getRaffleState()
                 const { upkeepNeeded } = await raffle.checkUpkeep("0x")
                 assert.equal(
@@ -130,20 +138,26 @@ import path from "path";
                 await raffle.enterRaffle({ value: raffleEntranceFee })
                 await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
                 await network.provider.request({ method: "evm_mine", params: [] })
-                const tx = await raffle.performUpkeep("0x")
+                const tx = await raffle.performUpkeep(
+                    new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
+                )
                 assert(tx)
             })
 
             it("reverts when checkUpKeep is false", async () => {
-                await expect(raffle.performUpkeep("0x")).to.be.revertedWithCustomError(raffle, 'Raffle__UpkeepNotNeeded')
+                await expect(raffle.performUpkeep(
+                    new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
+                )).to.be.revertedWithCustomError(raffle, 'Raffle__UpkeepNotNeeded')
             })
 
-            it("updates the raffle state and emits a requestId", async () => {
+            it("updates the raffle state (calculating) and emits a requestId", async () => {
                 await raffle.enterRaffle({ value: raffleEntranceFee })
                 await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
                 await network.provider.request({ method: "evm_mine", params: [] })
                 
-                const tx = await raffle.performUpkeep("0x")
+                const tx = await raffle.performUpkeep(
+                    new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
+                )
                 const txReceipt = await tx.wait(1)
                 const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested()
                 const logs2 = await vrfCoordinatorV2_5Mock.queryFilter(temp, txReceipt?.blockNumber, txReceipt?.blockNumber);
@@ -151,12 +165,33 @@ import path from "path";
                 let requestId = logs2[0]?.args?.requestId;
                 const raffleState = await raffle.getRaffleState()
 
+                // console.log("requestId: ", requestId); // should be one on mock contract
+                
                 assert(toNumber(requestId)>0)
                 assert.equal(raffleState.toString(), '1', "Raffle state should be 1 (CALCULATING)")
             })
         })
 
-        describe("", function () {
-            
+        describe("getRequestStatus", function () {
+            beforeEach(async function() {
+                await vrfCoordinatorV2_5Mock.fundSubscription(subId, 100000000000000000000n)
+
+                await raffle.enterRaffle({ value: raffleEntranceFee })
+                await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
+                await network.provider.request({ method: "evm_mine", params: [] })
+
+                const tx = await raffle.performUpkeep(
+                    new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
+                )
+                const txReceipt = await tx.wait(1)
+                const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested()
+                const logs2 = await vrfCoordinatorV2_5Mock.queryFilter(
+                    temp, 
+                    txReceipt?.blockNumber, 
+                    txReceipt?.blockNumber
+                );
+
+                let requestId = logs2[0]?.args?.requestId;
+            })
         })
     })

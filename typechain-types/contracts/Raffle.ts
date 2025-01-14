@@ -440,7 +440,11 @@ export interface Raffle extends BaseContract {
 
   payLatestWinner: TypedContractMethod<[], [void], "nonpayable">;
 
-  performUpkeep: TypedContractMethod<[arg0: BytesLike], [void], "nonpayable">;
+  performUpkeep: TypedContractMethod<
+    [performData: BytesLike],
+    [void],
+    "nonpayable"
+  >;
 
   rawFulfillRandomWords: TypedContractMethod<
     [requestId: BigNumberish, randomWords: BigNumberish[]],
@@ -540,7 +544,7 @@ export interface Raffle extends BaseContract {
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "performUpkeep"
-  ): TypedContractMethod<[arg0: BytesLike], [void], "nonpayable">;
+  ): TypedContractMethod<[performData: BytesLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "rawFulfillRandomWords"
   ): TypedContractMethod<
