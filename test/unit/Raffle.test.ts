@@ -109,7 +109,7 @@ import path from "path";
 
             it("returns false if enough time hasn't passed", async () => {
                 await raffle.enterRaffle({ value: raffleEntranceFee })
-                await network.provider.send("evm_increaseTime", [toNumber(interval) - 1])
+                await network.provider.send("evm_increaseTime", [toNumber(interval) - 3])
                 await network.provider.request({ method: "evm_mine", params: [] })
                 const { upkeepNeeded } = await raffle.checkUpkeep("0x")
                 assert(!upkeepNeeded)
@@ -133,5 +133,30 @@ import path from "path";
                 const tx = await raffle.performUpkeep("0x")
                 assert(tx)
             })
+
+            it("reverts when checkUpKeep is false", async () => {
+                await expect(raffle.performUpkeep("0x")).to.be.revertedWithCustomError(raffle, 'Raffle__UpkeepNotNeeded')
+            })
+
+            it("updates the raffle state and emits a requestId", async () => {
+                await raffle.enterRaffle({ value: raffleEntranceFee })
+                await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
+                await network.provider.request({ method: "evm_mine", params: [] })
+                
+                const tx = await raffle.performUpkeep("0x")
+                const txReceipt = await tx.wait(1)
+                const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested()
+                const logs2 = await vrfCoordinatorV2_5Mock.queryFilter(temp, txReceipt?.blockNumber, txReceipt?.blockNumber);
+                
+                let requestId = logs2[0]?.args?.requestId;
+                const raffleState = await raffle.getRaffleState()
+
+                assert(toNumber(requestId)>0)
+                assert.equal(raffleState.toString(), '1', "Raffle state should be 1 (CALCULATING)")
+            })
+        })
+
+        describe("", function () {
+            
         })
     })

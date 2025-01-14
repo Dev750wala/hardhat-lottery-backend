@@ -38,6 +38,10 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
         const logs = await mockContract.queryFilter(eventFilter, txReceipt?.blockNumber, txReceipt?.blockNumber);
         subscriptionId = logs[0]?.args?.subId;
 
+        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
+        
+        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
+
         // ------------------------------
         const outputPath = path.join(__dirname, "../AAAAAAAAAAAAAA/subscriptionData.json");
         const data = { subscriptionId: subscriptionId.toString() };
