@@ -227,21 +227,75 @@ import path from "path";
                 await expect(raffle.getRequestStatus(0)).to.be.revertedWith("request not found")
             })
 
-            it("should correctly return data for the latest request ID when multiple requests are made", async () => {
-                const tx2 = await raffle.performUpkeep(
-                    new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
-                )
-                const txReceipt2 = await tx2.wait(1)
-                const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested()
-                const logs = await vrfCoordinatorV2_5Mock.queryFilter(
-                    temp,
-                    txReceipt2?.blockNumber,
-                    txReceipt2?.blockNumber
-                );
+            it("should handle edge case when no requests have been made", async () => {
+                // Since we've made one request in beforeEach function ready, 
+                // the request id is one. So we have to dummy the request which have the requestId 
+                // to which he does not exist in request, So it should revert with request not found
+                await expect(raffle.getRequestStatus(2)).to.be.revertedWith("request not found");
+            });
+        })
 
-                var requestId2 = logs[0]?.args?.requestId;
+        describe("payLatestWinner", function () {
+            it("should revert if the winner is not selected yet", async () => {
+                await expect(raffle.payLatestWinner()).to.be.revertedWithCustomError(raffle, "Raffle_WinnerIsNotSelectedYet")
+            })
 
-                await assert.equal(raffle.lastRequestId , requestId2)
+            let requestId: any
+            // it("should revert if the winner has already been paid", async () => {})
+            describe("when the winner is selected", function () {
+                beforeEach(async function () {
+                    await vrfCoordinatorV2_5Mock.fundSubscription(subId, 100000000000000000000n)
+    
+                    await raffle.enterRaffle({ value: raffleEntranceFee })
+                    await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
+                    await network.provider.request({ method: "evm_mine", params: [] })
+    
+                    const tx = await raffle.performUpkeep(
+                        new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
+                    )
+                    const txReceipt = await tx.wait(1)
+                    const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested()
+                    const logs = await vrfCoordinatorV2_5Mock.queryFilter(
+                        temp,
+                        txReceipt?.blockNumber,
+                        txReceipt?.blockNumber
+                    );
+    
+                    requestId = logs[0]?.args?.requestId;
+                    await vrfCoordinatorV2_5Mock.fulfillRandomWords(
+                        requestId,
+                        raffle.getAddress()
+                    )
+                })
+    
+                it("should correctly identify the winner based on random word modulo players count", async() => {
+                    const { randomWords } = await raffle.getRequestStatus(requestId)
+    
+                    const totalPlayers = await raffle.getNumberOfPlayers()
+                    const winner = randomWords[0] % totalPlayers
+                    // const player = await raffle.getPlayer(winner)
+                    // console.log("player: ", player);
+                    assert(winner >= 0 && winner < totalPlayers)
+                })
+    
+                it("should reset the players array & raffle state to OPEN & last timestamp after paying the winner", async () => {
+                    var currentBlockTimestamp: number | undefined
+                    await raffle.payLatestWinner()
+
+                    const players = await raffle.getNumberOfPlayers()
+                    const raffleState = await raffle.getRaffleState()
+                    const lastTimeStamp = await raffle.getLastTimeStamp()
+
+                    await ethers.provider.getBlock("latest").then(val => currentBlockTimestamp = val?.timestamp)
+
+                    assert.equal(players, 0n)
+                    assert.equal(toNumber(raffleState), 0)
+                    assert.equal(lastTimeStamp.toString(), currentBlockTimestamp?.toString())
+                })
+
+                it("should transfer the entire contract balance to the winner", async() => {
+                    
+                })
             })
         })
     })

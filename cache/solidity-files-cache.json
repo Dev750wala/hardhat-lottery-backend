@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/dev_sadisatsowala/Web3.0-Patrick/hardhat-lottery/contracts/Raffle.sol": {
-      "lastModificationDate": 1736851046939,
+      "lastModificationDate": 1736854845674,
       "contentHash": "72154336e5a70365f91fcadb565fc103",
       "sourceName": "contracts/Raffle.sol",
       "solcConfig": {
