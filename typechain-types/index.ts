@@ -32,13 +32,7 @@ export type { SubscriptionAPI } from "./@chainlink/contracts/src/v0.8/vrf/dev/Su
 export { SubscriptionAPI__factory } from "./factories/@chainlink/contracts/src/v0.8/vrf/dev/SubscriptionAPI__factory";
 export type { VRFConsumerBaseV2Plus } from "./@chainlink/contracts/src/v0.8/vrf/dev/VRFConsumerBaseV2Plus";
 export { VRFConsumerBaseV2Plus__factory } from "./factories/@chainlink/contracts/src/v0.8/vrf/dev/VRFConsumerBaseV2Plus__factory";
-export type { VRFCoordinatorV2Interface } from "./@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface";
-export { VRFCoordinatorV2Interface__factory } from "./factories/@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface__factory";
 export type { VRFCoordinatorV2_5Mock } from "./@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock";
 export { VRFCoordinatorV2_5Mock__factory } from "./factories/@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock__factory";
-export type { VRFCoordinatorV2Mock } from "./@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2Mock";
-export { VRFCoordinatorV2Mock__factory } from "./factories/@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2Mock__factory";
-export type { VRFConsumerBaseV2 } from "./@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2";
-export { VRFConsumerBaseV2__factory } from "./factories/@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2__factory";
 export type { Raffle } from "./contracts/Raffle";
 export { Raffle__factory } from "./factories/contracts/Raffle__factory";

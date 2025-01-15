@@ -66,7 +66,9 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
         address _vrfCoordinator
     */
 
-    const entranceFee = networkConfig[chainId as keyof typeof networkConfig].entranceFee
+    
+    // const entranceFee = networkConfig[chainId as keyof typeof networkConfig].entranceFee
+    const entranceFee = ethers.parseEther("0.01")
     const interval = "30"
     
     const args = [entranceFee, subscriptionId, interval, vrfCoordinatorAddress]
@@ -87,7 +89,9 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
             (await deployments.get("VRFCoordinatorV2_5Mock")).address,
             deployerSigner
         )) as unknown as VRFCoordinatorV2_5Mock;
+        log("Adding consumer to mock...1111111111111");
         mockContract.addConsumer(subscriptionId, raffle.address)
+        log("Adding consumer to mock...2222222222222");
     }
 
     if(!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
