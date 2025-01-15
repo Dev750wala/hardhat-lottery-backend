@@ -252,7 +252,7 @@ import path from "path";
 
                 await new Promise(async (resolve, reject) => {
                     // Listen for WinnerPicked event
-                    raffle.on(raffle.filters.WinnerPicked, async () => {
+                    raffle.once(raffle.filters.WinnerPicked(), async () => {
                         console.log("WinnerPicked event listener triggered!");
                         try {
                             const recentWinner = await raffle.getRecentWinner();

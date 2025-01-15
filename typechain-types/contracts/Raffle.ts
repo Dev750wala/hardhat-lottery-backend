@@ -324,11 +324,9 @@ export namespace RequestedRaffleWinnerEvent {
 }
 
 export namespace WinnerPickedEvent {
-  export type InputTuple = [player: AddressLike];
-  export type OutputTuple = [player: string];
-  export interface OutputObject {
-    player: string;
-  }
+  export type InputTuple = [];
+  export type OutputTuple = [];
+  export interface OutputObject {}
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
   export type Log = TypedEventLog<Event>;
@@ -674,7 +672,7 @@ export interface Raffle extends BaseContract {
       RequestedRaffleWinnerEvent.OutputObject
     >;
 
-    "WinnerPicked(address)": TypedContractEvent<
+    "WinnerPicked()": TypedContractEvent<
       WinnerPickedEvent.InputTuple,
       WinnerPickedEvent.OutputTuple,
       WinnerPickedEvent.OutputObject
