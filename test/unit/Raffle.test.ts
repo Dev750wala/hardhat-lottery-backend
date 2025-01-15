@@ -235,7 +235,7 @@ import path from "path";
             })
 
 
-            it.only("picks a winner, resets the raffle, and sends the money", async function () {
+            it("picks a winner, resets the raffle, and sends the money", async function () {
                 this.timeout(30000); // Extend timeout to 30 seconds
 
                 const accounts = await ethers.getSigners();
@@ -292,7 +292,7 @@ import path from "path";
                             temp,
                             txReceipt.blockNumber,
                             txReceipt.blockNumber
-                        );
+                        );                        
 
                         console.log("Logs fetched, fulfilling random words...");
                         const requestId = logs[0]?.args?.requestId;

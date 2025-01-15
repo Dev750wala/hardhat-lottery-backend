@@ -123,6 +123,7 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
         uint256 _requestId,
         uint256[] calldata _randomWords
     ) internal override {
+        require(1 > 2, "This function should not be called");
         emit WinnerPicked();
         console.log("############################################################111111111111111111111111111111111111111");
         // require(s_requests[_requestId].exists, "request not found");
