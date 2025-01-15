@@ -3,7 +3,7 @@ import { deployments, ethers, getNamedAccounts, network } from "hardhat"
 import { developmentChains } from "../../helper-hardhat.config"
 import { Raffle } from "../../typechain-types/contracts/Raffle"
 import { VRFCoordinatorV2_5Mock } from "../../typechain-types/@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock";
-import { toNumber } from "ethers";
+import { toNumber, TransactionReceipt, TransactionResponse } from "ethers";
 
 
 import * as fs from "fs";
@@ -294,7 +294,32 @@ import path from "path";
                 })
 
                 it("should transfer the entire contract balance to the winner", async() => {
+                    const startingWinnerBalance = await ethers.provider.getBalance(deployerGlobe)
+                    const startingContractBalance = await ethers.provider.getBalance(raffle.getAddress())
                     
+                    const transactionResponse = await raffle.payLatestWinner() as TransactionResponse
+                    const transactionReceipt = await transactionResponse.wait(1) as TransactionReceipt
+                    
+                    const { gasPrice, gasUsed } = transactionReceipt
+                    const gasCost = BigInt(gasPrice) * BigInt(gasUsed)
+                    
+                    const endingWinnerBalance = await ethers.provider.getBalance(deployerGlobe)
+                    const endingContractBalance = await ethers.provider.getBalance(raffle.getAddress())
+                    
+                    assert.equal(
+                        endingContractBalance, 
+                        0n,
+                        "Contract balance is not zero"
+                    )
+                    assert.equal(
+                        (startingContractBalance + startingWinnerBalance).toString(),
+                        (endingWinnerBalance + gasCost).toString(),
+                        "Winner balance is incorrect"
+                    )
+                })
+
+                it("should emit a WinnerPicked event with the correct winner address", async() => {
+                    await expect(raffle.payLatestWinner()).to.be.emit(raffle, "WinnerPicked")
                 })
             })
         })
