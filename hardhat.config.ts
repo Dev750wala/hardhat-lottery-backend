@@ -1,13 +1,15 @@
-import { HardhatUserConfig } from "hardhat/config";
+import { HardhatUserConfig } from "hardhat/config"
 import "@nomicfoundation/hardhat-toolbox";
 // import "@typechain/hardhat"
 // import "@nomiclabs/hardhat-waffle"
 // require("@nomiclabs/hardhat-etherscan")
-require("hardhat-deploy")
-require("hardhat-gas-reporter")
-require("solidity-coverage")
-require("@nomicfoundation/hardhat-verify")
-require("dotenv").config()
+import '@nomicfoundation/hardhat-ethers';
+import "hardhat-deploy"
+import "hardhat-gas-reporter"
+import "solidity-coverage"
+import "@nomicfoundation/hardhat-verify"
+import * as dotenv from "dotenv"
+dotenv.config()
 
 
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL

@@ -249,7 +249,7 @@ import path from "path";
                     await raffle.enterRaffle({ value: raffleEntranceFee });
                 }
                 const startingTimestamp = await raffle.getLastTimeStamp();
-                
+
                 await new Promise(async (resolve, reject) => {
                     // Listen for WinnerPicked event
                     await raffle.once(raffle.filters.WinnerPicked(), async () => {
@@ -283,7 +283,7 @@ import path from "path";
 
                         console.log("Waiting for performUpkeep transaction...");
                         const txReceipt = await tx.wait(1) as TransactionReceipt;
-                        
+
                         console.log("Fetching RandomWordsRequested logs...");
                         const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested();
                         startingBalance = await ethers.provider.getBalance(accounts[2]);
@@ -300,12 +300,9 @@ import path from "path";
                             requestId,
                             raffle.getAddress()
                         ) as TransactionResponse
-                        const recceiptOfFulfilled = await fulfilling.wait(1) as TransactionReceipt;
-                        console.log("--------------------------------------------------");
-                        console.log("Transaction receipt: ", fulfilling);
-                        
-                        console.log("--------------------------------------------------");
+                        await fulfilling.wait(1);
                         console.log("Random words fulfilled!");
+                        
                     } catch (error) {
                         reject(error);
                     }
