@@ -47,8 +47,8 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
 
     event RequestedRaffleWinner(uint256 indexed requestId);
     event RaffleEnter(address indexed player);
-    event WinnerPicked();
-    // event WinnerPicked(address indexed player);
+    // event WinnerPicked();
+    event WinnerPicked(address indexed player);
 
     constructor(
         uint256 entranceFee,
@@ -123,43 +123,27 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
         uint256 _requestId,
         uint256[] calldata _randomWords
     ) internal override {
-        require(1 > 2, "This function should not be called");
-        emit WinnerPicked();
-        console.log("############################################################111111111111111111111111111111111111111");
-        // require(s_requests[_requestId].exists, "request not found");
-        console.log("############################################################222222222222222222222222222222222222222");
+        require(s_requests[_requestId].exists, "request not found");
         s_requests[_requestId].fulfilled = true;
         s_requests[_requestId].randomWords = _randomWords;
 
-        console.log("############################################################333333333333333333333333333333333333333");
-        // ---------------------------------------------
-        // if (lastRequestId == 0 || !s_requests[lastRequestId].fulfilled) {
-        //     revert Raffle_WinnerIsNotSelectedYet();
-        // }
+        if (lastRequestId == 0 || !s_requests[lastRequestId].fulfilled) {
+            revert Raffle_WinnerIsNotSelectedYet();
+        }
         address payable winner = s_players[
             _randomWords[0] % s_players.length
         ];
-        console.log("############################################################444444444444444444444444444444444444444");
         s_recentWinner = winner;
-        console.log("############################################################444444444444444444444444444444444444444");
-        console.log("############################################################444444444444444444444444444444444444444");
-        console.log("############################################################444444444444444444444444444444444444444");
-        console.log("############################################################444444444444444444444444444444444444444");
-        console.log("############################################################444444444444444444444444444444444444444");
-        console.log("############################################################444444444444444444444444444444444444444");
-        // (bool success,) = winner.call{value: address(this).balance}("");
-        // s_players = new address payable[](0);
-        // delete s_players;
-        console.log("############################################################555555555555555555555555555555555555555");
+        (bool success,) = winner.call{value: address(this).balance}("");
+        s_players = new address payable[](0);
+        delete s_players;
         s_raffleState = RaffleState.OPEN;
         console.log("Winner Address: %s", winner);
-        console.log("############################################################666666666666666666666666666666666666666");
         s_lastTimeStamp = block.timestamp;
-        console.log("############################################################777777777777777777777777777777777777777");
-        // if(!success) {
-        //     revert Raffle__TransferFailed();
-        // }
-        console.log("############################################################888888888888888888888888888888888888888");
+        if(!success) {
+            revert Raffle__TransferFailed();
+        }
+        emit WinnerPicked(winner);
     }
 
     // function getRequestStatus(

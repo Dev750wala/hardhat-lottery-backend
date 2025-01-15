@@ -235,7 +235,7 @@ import path from "path";
             })
 
 
-            it("picks a winner, resets the raffle, and sends the money", async function () {
+            it.only("picks a winner, resets the raffle, and sends the money", async function () {
                 this.timeout(30000); // Extend timeout to 30 seconds
 
                 const accounts = await ethers.getSigners();
@@ -249,10 +249,10 @@ import path from "path";
                     await raffle.enterRaffle({ value: raffleEntranceFee });
                 }
                 const startingTimestamp = await raffle.getLastTimeStamp();
-
+                
                 await new Promise(async (resolve, reject) => {
                     // Listen for WinnerPicked event
-                    raffle.once(raffle.filters.WinnerPicked(), async () => {
+                    await raffle.once(raffle.filters.WinnerPicked(), async () => {
                         console.log("WinnerPicked event listener triggered!");
                         try {
                             const recentWinner = await raffle.getRecentWinner();
@@ -269,10 +269,10 @@ import path from "path";
                             );
                             assert(endingTimestamp > startingTimestamp);
 
-                            resolve("Winner picked successfully");
                         } catch (error) {
                             reject(error);
                         }
+                        resolve("Winner picked successfully");
                     });
 
                     try {
@@ -283,23 +283,28 @@ import path from "path";
 
                         console.log("Waiting for performUpkeep transaction...");
                         const txReceipt = await tx.wait(1) as TransactionReceipt;
-
+                        
                         console.log("Fetching RandomWordsRequested logs...");
                         const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested();
                         startingBalance = await ethers.provider.getBalance(accounts[2]);
-
+                        
                         const logs = await vrfCoordinatorV2_5Mock.queryFilter(
                             temp,
                             txReceipt.blockNumber,
                             txReceipt.blockNumber
                         );                        
-
+                        
                         console.log("Logs fetched, fulfilling random words...");
                         const requestId = logs[0]?.args?.requestId;
-                        await vrfCoordinatorV2_5Mock.fulfillRandomWords(
+                        const fulfilling = await vrfCoordinatorV2_5Mock.fulfillRandomWords(
                             requestId,
                             raffle.getAddress()
-                        );
+                        ) as TransactionResponse
+                        const recceiptOfFulfilled = await fulfilling.wait(1) as TransactionReceipt;
+                        console.log("--------------------------------------------------");
+                        console.log("Transaction receipt: ", fulfilling);
+                        
+                        console.log("--------------------------------------------------");
                         console.log("Random words fulfilled!");
                     } catch (error) {
                         reject(error);
