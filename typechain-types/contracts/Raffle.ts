@@ -38,12 +38,10 @@ export interface RaffleInterface extends Interface {
       | "getRaffleState"
       | "getRecentWinner"
       | "getRequestConfirmations"
-      | "getRequestStatus"
       | "keyHash"
       | "lastRequestId"
       | "numWords"
       | "owner"
-      | "payLatestWinner"
       | "performUpkeep"
       | "rawFulfillRandomWords"
       | "requestIds"
@@ -114,10 +112,6 @@ export interface RaffleInterface extends Interface {
     functionFragment: "getRequestConfirmations",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "getRequestStatus",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "keyHash", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "lastRequestId",
@@ -125,10 +119,6 @@ export interface RaffleInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "numWords", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "payLatestWinner",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "performUpkeep",
     values: [BytesLike]
@@ -207,10 +197,6 @@ export interface RaffleInterface extends Interface {
     functionFragment: "getRequestConfirmations",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getRequestStatus",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "keyHash", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "lastRequestId",
@@ -218,10 +204,6 @@ export interface RaffleInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "numWords", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "payLatestWinner",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "performUpkeep",
     data: BytesLike
@@ -424,18 +406,6 @@ export interface Raffle extends BaseContract {
 
   getRequestConfirmations: TypedContractMethod<[], [bigint], "view">;
 
-  getRequestStatus: TypedContractMethod<
-    [_requestId: BigNumberish],
-    [
-      [boolean, boolean, bigint[]] & {
-        fulfilled: boolean;
-        exists: boolean;
-        randomWords: bigint[];
-      }
-    ],
-    "view"
-  >;
-
   keyHash: TypedContractMethod<[], [string], "view">;
 
   lastRequestId: TypedContractMethod<[], [bigint], "view">;
@@ -443,8 +413,6 @@ export interface Raffle extends BaseContract {
   numWords: TypedContractMethod<[], [bigint], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
-
-  payLatestWinner: TypedContractMethod<[], [void], "nonpayable">;
 
   performUpkeep: TypedContractMethod<
     [performData: BytesLike],
@@ -527,19 +495,6 @@ export interface Raffle extends BaseContract {
     nameOrSignature: "getRequestConfirmations"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "getRequestStatus"
-  ): TypedContractMethod<
-    [_requestId: BigNumberish],
-    [
-      [boolean, boolean, bigint[]] & {
-        fulfilled: boolean;
-        exists: boolean;
-        randomWords: bigint[];
-      }
-    ],
-    "view"
-  >;
-  getFunction(
     nameOrSignature: "keyHash"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -551,9 +506,6 @@ export interface Raffle extends BaseContract {
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "payLatestWinner"
-  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "performUpkeep"
   ): TypedContractMethod<[performData: BytesLike], [void], "nonpayable">;

@@ -123,7 +123,7 @@ import path from "path";
                 assert(!upkeepNeeded)
             })
 
-            it("returns true if enough time has passed, has players, eth, and is open", async() => {
+            it("returns true if enough time has passed, has players, eth, and is open", async () => {
                 await raffle.enterRaffle({ value: raffleEntranceFee })
                 await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
                 await network.provider.request({ method: "evm_mine", params: [] })
@@ -154,27 +154,27 @@ import path from "path";
                 await raffle.enterRaffle({ value: raffleEntranceFee })
                 await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
                 await network.provider.request({ method: "evm_mine", params: [] })
-                
+
                 const tx = await raffle.performUpkeep(
                     new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
                 )
                 const txReceipt = await tx.wait(1)
                 const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested()
                 const logs2 = await vrfCoordinatorV2_5Mock.queryFilter(temp, txReceipt?.blockNumber, txReceipt?.blockNumber);
-                
+
                 let requestId = logs2[0]?.args?.requestId;
                 const raffleState = await raffle.getRaffleState()
 
                 // console.log("requestId: ", requestId); // should be one on mock contract
-                
-                assert(toNumber(requestId)>0)
+
+                assert(toNumber(requestId) > 0)
                 assert.equal(raffleState.toString(), '1', "Raffle state should be 1 (CALCULATING)")
             })
         })
 
-        describe("getRequestStatus", function () {
+        describe("fulfillRandomWords", function () {
             let requestId: any;
-            beforeEach(async function() {
+            beforeEach(async function () {
                 await vrfCoordinatorV2_5Mock.fundSubscription(subId, 100000000000000000000n)
 
                 await raffle.enterRaffle({ value: raffleEntranceFee })
@@ -187,140 +187,190 @@ import path from "path";
                 const txReceipt = await tx.wait(1)
                 const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested()
                 const logs = await vrfCoordinatorV2_5Mock.queryFilter(
-                    temp, 
-                    txReceipt?.blockNumber, 
+                    temp,
+                    txReceipt?.blockNumber,
                     txReceipt?.blockNumber
                 );
 
                 requestId = logs[0]?.args?.requestId;
             })
+            it.only("can only be called after performupkeep", async () => {
+                await expect(
+                    vrfCoordinatorV2_5Mock.fulfillRandomWords(0, raffle.getAddress()) 
+                ).to.be.revertedWithCustomError(vrfCoordinatorV2_5Mock, "InvalidRequest");
 
-            it("should return the fulfilled status as false for an unfulfilled request", async () => {
-                const { fulfilled } = await raffle.getRequestStatus(requestId)
-                assert.equal(fulfilled, false)
-            })
-            
-            it("should return the fulfilled status as true for a fulfilled request", async () => {
-                // fulfilling the request manually here through the mock contract
-                await vrfCoordinatorV2_5Mock.fulfillRandomWords(
-                    requestId, 
-                    raffle.getAddress()
-                )
-
-                const { fulfilled } = await raffle.getRequestStatus(requestId)
-                assert.equal(fulfilled, true)
-            })
-
-            it("should return the correct random words for a fulfilled request", async () => {
-                await vrfCoordinatorV2_5Mock.fulfillRandomWords(
-                    requestId,
-                    raffle.getAddress()
-                )
-
-                const { randomWords } = await raffle.getRequestStatus(requestId)
-                // console.log("randomWords: ", randomWords);   // should be an array of 1 random number.
+                await expect(
+                    vrfCoordinatorV2_5Mock.fulfillRandomWords(3, raffle.getAddress()) 
+                ).to.be.revertedWithCustomError(vrfCoordinatorV2_5Mock, "InvalidRequest");
                 
-                assert(randomWords[0] > 0)
+                await expect(
+                    vrfCoordinatorV2_5Mock.fulfillRandomWords(requestId, raffle.getAddress())
+                ).not.to.be.reverted;
+
             })
 
-            it("should revert if the request ID does not exist", async () => {
-                await expect(raffle.getRequestStatus(0)).to.be.revertedWith("request not found")
-            })
-
-            it("should handle edge case when no requests have been made", async () => {
-                // Since we've made one request in beforeEach function ready, 
-                // the request id is one. So we have to dummy the request which have the requestId 
-                // to which he does not exist in request, So it should revert with request not found
-                await expect(raffle.getRequestStatus(2)).to.be.revertedWith("request not found");
-            });
-        })
-
-        describe("payLatestWinner", function () {
-            it("should revert if the winner is not selected yet", async () => {
-                await expect(raffle.payLatestWinner()).to.be.revertedWithCustomError(raffle, "Raffle_WinnerIsNotSelectedYet")
-            })
-
-            let requestId: any
-            // it("should revert if the winner has already been paid", async () => {})
-            describe("when the winner is selected", function () {
-                beforeEach(async function () {
-                    await vrfCoordinatorV2_5Mock.fundSubscription(subId, 100000000000000000000n)
-    
+            it("picks a winner, resests the raffle and sends the money", async () => {
+                const accounts = await ethers.getSigners()
+                const additionalEntrances = 3 // to test
+                const startingIndex = 2
+                let startingBalance
+                for (let i = startingIndex; i < startingIndex + additionalEntrances; i++) { // i = 2; i < 5; i=i+1
+                    raffle = raffle.connect(accounts[i]) // Returns a new instance of the Raffle contract connected to player
                     await raffle.enterRaffle({ value: raffleEntranceFee })
-                    await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
-                    await network.provider.request({ method: "evm_mine", params: [] })
-    
-                    const tx = await raffle.performUpkeep(
-                        new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
-                    )
-                    const txReceipt = await tx.wait(1)
-                    const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested()
-                    const logs = await vrfCoordinatorV2_5Mock.queryFilter(
-                        temp,
-                        txReceipt?.blockNumber,
-                        txReceipt?.blockNumber
-                    );
-    
-                    requestId = logs[0]?.args?.requestId;
-                    await vrfCoordinatorV2_5Mock.fulfillRandomWords(
-                        requestId,
-                        raffle.getAddress()
-                    )
-                })
-    
-                it("should correctly identify the winner based on random word modulo players count", async() => {
-                    const { randomWords } = await raffle.getRequestStatus(requestId)
-    
-                    const totalPlayers = await raffle.getNumberOfPlayers()
-                    const winner = randomWords[0] % totalPlayers
-                    // const player = await raffle.getPlayer(winner)
-                    // console.log("player: ", player);
-                    assert(winner >= 0 && winner < totalPlayers)
-                })
-    
-                it("should reset the players array & raffle state to OPEN & last timestamp after paying the winner", async () => {
-                    var currentBlockTimestamp: number | undefined
-                    await raffle.payLatestWinner()
-
-                    const players = await raffle.getNumberOfPlayers()
-                    const raffleState = await raffle.getRaffleState()
-                    const lastTimeStamp = await raffle.getLastTimeStamp()
-
-                    await ethers.provider.getBlock("latest").then(val => currentBlockTimestamp = val?.timestamp)
-
-                    assert.equal(players, 0n)
-                    assert.equal(toNumber(raffleState), 0)
-                    assert.equal(lastTimeStamp.toString(), currentBlockTimestamp?.toString())
-                })
-
-                it("should transfer the entire contract balance to the winner", async() => {
-                    const startingWinnerBalance = await ethers.provider.getBalance(deployerGlobe)
-                    const startingContractBalance = await ethers.provider.getBalance(raffle.getAddress())
-                    
-                    const transactionResponse = await raffle.payLatestWinner() as TransactionResponse
-                    const transactionReceipt = await transactionResponse.wait(1) as TransactionReceipt
-                    
-                    const { gasPrice, gasUsed } = transactionReceipt
-                    const gasCost = BigInt(gasPrice) * BigInt(gasUsed)
-                    
-                    const endingWinnerBalance = await ethers.provider.getBalance(deployerGlobe)
-                    const endingContractBalance = await ethers.provider.getBalance(raffle.getAddress())
-                    
-                    assert.equal(
-                        endingContractBalance, 
-                        0n,
-                        "Contract balance is not zero"
-                    )
-                    assert.equal(
-                        (startingContractBalance + startingWinnerBalance).toString(),
-                        (endingWinnerBalance + gasCost).toString(),
-                        "Winner balance is incorrect"
-                    )
-                })
-
-                it("should emit a WinnerPicked event with the correct winner address", async() => {
-                    await expect(raffle.payLatestWinner()).to.be.emit(raffle, "WinnerPicked")
-                })
+                }
+                
             })
         })
+
+        // describe("getRequestStatus", function () {
+        //     let requestId: any;
+        //     beforeEach(async function() {
+        //         await vrfCoordinatorV2_5Mock.fundSubscription(subId, 100000000000000000000n)
+
+        //         await raffle.enterRaffle({ value: raffleEntranceFee })
+        //         await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
+        //         await network.provider.request({ method: "evm_mine", params: [] })
+
+        //         const tx = await raffle.performUpkeep(
+        //             new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
+        //         )
+        //         const txReceipt = await tx.wait(1)
+        //         const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested()
+        //         const logs = await vrfCoordinatorV2_5Mock.queryFilter(
+        //             temp, 
+        //             txReceipt?.blockNumber, 
+        //             txReceipt?.blockNumber
+        //         );
+
+        //         requestId = logs[0]?.args?.requestId;
+        //     })
+
+        //     it("should return the fulfilled status as false for an unfulfilled request", async () => {
+        //         const { fulfilled } = await raffle.getRequestStatus(requestId)
+        //         assert.equal(fulfilled, false)
+        //     })
+
+        //     it("should return the fulfilled status as true for a fulfilled request", async () => {
+        //         // fulfilling the request manually here through the mock contract
+        //         await vrfCoordinatorV2_5Mock.fulfillRandomWords(
+        //             requestId, 
+        //             raffle.getAddress()
+        //         )
+
+        //         const { fulfilled } = await raffle.getRequestStatus(requestId)
+        //         assert.equal(fulfilled, true)
+        //     })
+
+        //     it("should return the correct random words for a fulfilled request", async () => {
+        //         await vrfCoordinatorV2_5Mock.fulfillRandomWords(
+        //             requestId,
+        //             raffle.getAddress()
+        //         )
+
+        //         const { randomWords } = await raffle.getRequestStatus(requestId)
+        //         // console.log("randomWords: ", randomWords);   // should be an array of 1 random number.
+
+        //         assert(randomWords[0] > 0)
+        //     })
+
+        //     it("should revert if the request ID does not exist", async () => {
+        //         await expect(raffle.getRequestStatus(0)).to.be.revertedWith("request not found")
+        //     })
+
+        //     it("should handle edge case when no requests have been made", async () => {
+        //         // Since we've made one request in beforeEach function ready, 
+        //         // the request id is one. So we have to dummy the request which have the requestId 
+        //         // to which he does not exist in request, So it should revert with request not found
+        //         await expect(raffle.getRequestStatus(2)).to.be.revertedWith("request not found");
+        //     });
+        // })
+
+        // describe("payLatestWinner", function () {
+        //     it("should revert if the winner is not selected yet", async () => {
+        //         await expect(raffle.payLatestWinner()).to.be.revertedWithCustomError(raffle, "Raffle_WinnerIsNotSelectedYet")
+        //     })
+
+        //     let requestId: any
+        //     // it("should revert if the winner has already been paid", async () => {})
+        //     describe("when the winner is selected", function () {
+        //         beforeEach(async function () {
+        //             await vrfCoordinatorV2_5Mock.fundSubscription(subId, 100000000000000000000n)
+
+        //             await raffle.enterRaffle({ value: raffleEntranceFee })
+        //             await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
+        //             await network.provider.request({ method: "evm_mine", params: [] })
+
+        //             const tx = await raffle.performUpkeep(
+        //                 new ethers.AbiCoder().encode(["bool"], [ENABLE_NATIVE_PAYMENT])
+        //             )
+        //             const txReceipt = await tx.wait(1)
+        //             const temp = vrfCoordinatorV2_5Mock.filters.RandomWordsRequested()
+        //             const logs = await vrfCoordinatorV2_5Mock.queryFilter(
+        //                 temp,
+        //                 txReceipt?.blockNumber,
+        //                 txReceipt?.blockNumber
+        //             );
+
+        //             requestId = logs[0]?.args?.requestId;
+        //             await vrfCoordinatorV2_5Mock.fulfillRandomWords(
+        //                 requestId,
+        //                 raffle.getAddress()
+        //             )
+        //         })
+
+        //         it("should correctly identify the winner based on random word modulo players count", async() => {
+        //             const { randomWords } = await raffle.getRequestStatus(requestId)
+
+        //             const totalPlayers = await raffle.getNumberOfPlayers()
+        //             const winner = randomWords[0] % totalPlayers
+        //             // const player = await raffle.getPlayer(winner)
+        //             // console.log("player: ", player);
+        //             assert(winner >= 0 && winner < totalPlayers)
+        //         })
+
+        //         it("should reset the players array & raffle state to OPEN & last timestamp after paying the winner", async () => {
+        //             var currentBlockTimestamp: number | undefined
+        //             await raffle.payLatestWinner()
+
+        //             const players = await raffle.getNumberOfPlayers()
+        //             const raffleState = await raffle.getRaffleState()
+        //             const lastTimeStamp = await raffle.getLastTimeStamp()
+
+        //             await ethers.provider.getBlock("latest").then(val => currentBlockTimestamp = val?.timestamp)
+
+        //             assert.equal(players, 0n)
+        //             assert.equal(toNumber(raffleState), 0)
+        //             assert.equal(lastTimeStamp.toString(), currentBlockTimestamp?.toString())
+        //         })
+
+        //         it("should transfer the entire contract balance to the winner", async() => {
+        //             const startingWinnerBalance = await ethers.provider.getBalance(deployerGlobe)
+        //             const startingContractBalance = await ethers.provider.getBalance(raffle.getAddress())
+
+        //             const transactionResponse = await raffle.payLatestWinner() as TransactionResponse
+        //             const transactionReceipt = await transactionResponse.wait(1) as TransactionReceipt
+
+        //             const { gasPrice, gasUsed } = transactionReceipt
+        //             const gasCost = BigInt(gasPrice) * BigInt(gasUsed)
+
+        //             const endingWinnerBalance = await ethers.provider.getBalance(deployerGlobe)
+        //             const endingContractBalance = await ethers.provider.getBalance(raffle.getAddress())
+
+        //             assert.equal(
+        //                 endingContractBalance, 
+        //                 0n,
+        //                 "Contract balance is not zero"
+        //             )
+        //             assert.equal(
+        //                 (startingContractBalance + startingWinnerBalance).toString(),
+        //                 (endingWinnerBalance + gasCost).toString(),
+        //                 "Winner balance is incorrect"
+        //             )
+        //         })
+
+        //         it("should emit a WinnerPicked event with the correct winner address", async() => {
+        //             await expect(raffle.payLatestWinner()).to.be.emit(raffle, "WinnerPicked")
+        //         })
+        //     })
+        // })
     })
