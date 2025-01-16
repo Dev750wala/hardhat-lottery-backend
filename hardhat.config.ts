@@ -50,6 +50,11 @@ const config: HardhatUserConfig = {
             default: 1
         }
     },
+    etherscan: {
+        apiKey: {
+            sepolia: process.env.ETHERSCAN_API_KEY,
+        }
+    },
     solidity: "0.8.28",
 };
 
