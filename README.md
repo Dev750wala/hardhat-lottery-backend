@@ -5,4 +5,4 @@
 
 
 
-- NOTE: in ```/deploy/01-deploy-raffle.ts``` change waitConfirmations to ```6``` later.d
+- NOTE: in ```/deploy/01-deploy-raffle.ts``` change waitConfirmations to ```6``` later.
