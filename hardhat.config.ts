@@ -42,6 +42,7 @@ const config: HardhatUserConfig = {
         currency: 'USD',
         enabled: false
     },
+    // accounts provided here will be accessible with getNamesAccounts function. 
     namedAccounts: {
         deployer: {
             default: 0,
