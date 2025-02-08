@@ -220,7 +220,7 @@ import path from "path";
                 await vrfCoordinatorV2_5Mock.fundSubscription(subId, 100000000000000000000n)
 
                 await raffle.enterRaffle({ value: raffleEntranceFee })
-                await network.provider.send("evm_increaseTime", [toNumber(interval) + 1])
+                await network.provider.send("evm_increaseTime", [toNumber(interval) + 10])
                 await network.provider.request({ method: "evm_mine", params: [] })
             })
 
@@ -247,7 +247,8 @@ import path from "path";
 
                 await new Promise(async (resolve, reject) => {
                     // Listen for WinnerPicked event
-                    await raffle.once(raffle.filters.WinnerPicked(deployer), async () => {
+                    raffle.once(raffle.filters.WinnerPicked(deployer), async () => {
+                    // raffle.on(raffle., async () => {
                         console.log("WinnerPicked event listener triggered!");
                         try {
                             const recentWinner = await raffle.getRecentWinner();
@@ -302,7 +303,5 @@ import path from "path";
                     }
                 });
             });
-
-
         })
     })

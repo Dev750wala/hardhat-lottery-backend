@@ -16,7 +16,7 @@ const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL
 
 
 const config: HardhatUserConfig = {
-    defaultNetwork: "hardhat",
+    defaultNetwork: "localhost",
     networks: {
         localhost: {
             url: "HTTP://127.0.0.1:8545"  

@@ -146,33 +146,6 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
         emit WinnerPicked(winner);
     }
 
-    // function getRequestStatus(
-    //     uint256 _requestId
-    // ) external view returns (bool fulfilled, bool exists, uint256[] memory randomWords) {
-    //     require(s_requests[_requestId].exists, "request not found");
-    //     RequestStatus memory request = s_requests[_requestId];
-    //     return (request.fulfilled, request.exists, request.randomWords);
-    // }
-
-    // function payLatestWinner() external {
-            // if (lastRequestId == 0 || !s_requests[lastRequestId].fulfilled) {
-            //     revert Raffle_WinnerIsNotSelectedYet();
-            // }
-            // address payable winner = s_players[
-            //     s_requests[lastRequestId].randomWords[0] % s_players.length
-            // ];
-            // s_recentWinner = winner;
-            // s_players = new address payable[](0);
-            // s_raffleState = RaffleState.OPEN;
-            // s_lastTimeStamp = block.timestamp;
-            // (bool success,) = winner.call{value: address(this).balance}("");
-
-            // if(!success) {
-            //     revert Raffle__TransferFailed();
-            // }
-            // emit WinnerPicked(winner);
-    // }
-
     function getRaffleState() public view returns (RaffleState) {
         return s_raffleState;
     }
